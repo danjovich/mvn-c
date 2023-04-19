@@ -1,5 +1,5 @@
-#ifndef VETORES_H_
-#define VETORES_H_
+#if !defined(LAU_H_)
+#define LAU_H_
 #include "types.h"
 
 #include <stdint.h>
@@ -56,4 +56,4 @@ int16_t mul(int16_t a, int16_t b);
  */
 int16_t div(int16_t a, int16_t b);
 
-#endif // VETORES_H_
+#endif // LAU_H_
