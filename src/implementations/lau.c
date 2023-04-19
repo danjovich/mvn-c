@@ -1,4 +1,4 @@
-#include "../headers/lau.h"
+#include "../include/lau.h"
 
 bool is_zero(int16_t v) { return v == 0; }
 
