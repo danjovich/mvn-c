@@ -196,7 +196,9 @@ void mvn() {
   }
 
   while (regs.IC < MEMORY_SIZE) {
-    regs.IR = (memory[regs.IC] * 0x100) + memory[regs.IC + 0x1];
+    regs.MAR = regs.IC;
+    get_from_memory();
+    regs.IR = regs.MDR;
     regs.OP = regs.IR / 0x1000;
     regs.OI = regs.IR - (regs.OP * 0x1000);
 
