@@ -23,11 +23,11 @@ int get_from_device(disp_type device_type, uint8_t logic_unit) {
           if (!feof(disp_lst[i].file)) {
             regs.AC += fgetc(disp_lst[i].file);
           } else {
-            printf("No more data to get, returning 0x00");
+            printf("No more data to get, returning 0x00\n");
             regs.AC += 0x0;
           }
         } else {
-          printf("No more data to get, returning 0x00");
+          printf("No more data to get, returning 0x00\n");
           regs.AC = 0x0;
         }
         break;
