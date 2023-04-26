@@ -82,10 +82,12 @@ int fill_disp_lst(FILE *file) {
             if (read_char == '\n') {
               read_newline = true;
             } else if (read_char != ' ') {
+              free(curr_disp->filename);
               printf("Error: invalid disp.lst file\n");
               return 1;
             }
           } else if (read_char != ' ') {
+            free(curr_disp->filename);
             printf("Error: invalid disp.lst file\n");
             return 1;
           }
@@ -93,6 +95,7 @@ int fill_disp_lst(FILE *file) {
 
         if (read_newline &&
             (curr_disp->type == disk || curr_disp->type == printer)) {
+          free(curr_disp->filename);
           printf("Error: invalid disp.lst file\n");
           return 1;
         }
@@ -105,6 +108,7 @@ int fill_disp_lst(FILE *file) {
         }
       } else if (!read_filename) {
         if (curr_disp->type == keyboard || curr_disp->type == monitor) {
+          free(curr_disp->filename);
           printf("Error: invalid disp.lst file\n");
           return 1;
         }
