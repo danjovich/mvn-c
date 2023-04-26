@@ -1,7 +1,7 @@
 #include "error.c"
-#include "implementations/lau.c"
 #include "implementations/memory.c"
 #include "implementations/registers.c"
+#include "include/types.h"
 
 #include <stdio.h>
 
