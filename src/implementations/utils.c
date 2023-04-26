@@ -26,7 +26,7 @@ bool is_hexadecimal(char digit) {
 unsigned int hexadecimal_to_int(char digits[], int digits_len) {
   unsigned int result = 0;
 
-  for (int i = digits_len - 1; i >= 0; --i) {
+  for (int i = digits_len - 1; i >= 0; i--) {
     if (digits[i] >= '0' && digits[i] <= '9') {
       result += digits[i] - '0';
     } else if (digits[i] >= 'a' && digits[i] <= 'f') {
