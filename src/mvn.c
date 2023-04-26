@@ -1,9 +1,69 @@
+#if !defined(MVN_C_)
+#define MVN_C_
+
 #include "error.c"
+#include "implementations/disp.c"
 #include "implementations/memory.c"
 #include "implementations/registers.c"
 #include "include/types.h"
 
 #include <stdio.h>
+
+int get_from_device(disp_type device_type, uint8_t logic_unit) {
+  if (device_type == keyboard) {
+    regs.AC = getchar() * 0x100;
+    regs.AC += getchar();
+  } else if (device_type == printer) {
+    // TODO: implement printer connection
+  } else if (device_type == disk) {
+    for (int i = 0; i < disp_lst_len; i++) {
+      if (disp_lst[i].type == disk && disp_lst[i].logic_unit == logic_unit) {
+        if (!feof(disp_lst[i].file)) {
+          regs.AC = fgetc(disp_lst[i].file) * 0x100;
+          if (!feof(disp_lst[i].file)) {
+            regs.AC += fgetc(disp_lst[i].file);
+          } else {
+            printf("No more data to get, returning 0x00");
+            regs.AC += 0x0;
+          }
+        } else {
+          printf("No more data to get, returning 0x00");
+          regs.AC = 0x0;
+        }
+        break;
+      }
+    }
+  } else if (device_type == monitor) {
+    printf("Error: invalid device type 'monitor' for instruction 'D'\n");
+    return 1;
+  }
+
+  return 0;
+}
+
+int put_on_device(disp_type device_type, uint8_t logic_unit) {
+  unsigned char c1 = regs.AC / 0x100, c2 = regs.AC - (c1 * 0x100);
+
+  if (device_type == monitor) {
+    putchar(c1);
+    putchar(c2);
+  } else if (device_type == printer) {
+    // TODO: implement printer connection
+  } else if (device_type == disk) {
+    for (int i = 0; i < disp_lst_len; i++) {
+      if (disp_lst[i].type == disk && disp_lst[i].logic_unit == logic_unit) {
+        fputc(c1, disp_lst[i].file);
+        fputc(c2, disp_lst[i].file);
+        break;
+      }
+    }
+  } else if (device_type == keyboard) {
+    printf("Error: invalid device type 'keyboard' for instruction 'E'\n");
+    return 1;
+  }
+
+  return 0;
+}
 
 bool execute_mvn_instruction() {
   switch (regs.OP) {
@@ -91,16 +151,21 @@ bool execute_mvn_instruction() {
     return true;
   case 0xD:
     // GD
-    regs.AC = getchar() * 0x100;
-    regs.AC += getchar();
+    if (get_from_device(regs.OI / 0x100, regs.OI)) {
+      return true;
+    }
     regs.IC += 0x2;
     break;
   case 0xE:
-    putchar(regs.AC / 0x100);
-    putchar(regs.AC);
+    // PD
+    if (put_on_device(regs.OI / 0x100, regs.OI)) {
+      return true;
+    }
     regs.IC += 0x2;
     break;
   case 0xF:
+    // OS
+    // TODO: implement F instruction
     regs.IC += 0x2;
     break;
   default:
@@ -112,20 +177,36 @@ bool execute_mvn_instruction() {
 }
 
 void mvn() {
+  for (int i = 0; i < disp_lst_len; i++) {
+    if (disp_lst[i].type == disk) {
+      char *file_mode;
+
+      if (disp_lst[i].mode == 'l') {
+        file_mode = "r";
+      } else if (disp_lst[i].mode == 'e') {
+        file_mode = "w";
+      } else {
+        file_mode = "r";
+      }
+
+      FILE *file = fopen(disp_lst[i].filename, file_mode);
+
+      disp_lst[i].file = file;
+    }
+  }
+
   while (regs.IC < MEMORY_SIZE) {
-    regs.IR = ((memory[regs.IC] * 0x100) + memory[regs.IC + 0x1]);
+    regs.IR = (memory[regs.IC] * 0x100) + memory[regs.IC + 0x1];
     regs.OP = regs.IR / 0x1000;
     regs.OI = regs.IR - (regs.OP * 0x1000);
-
-    // printf("IC: %x, OP: %x, OI: %x, AC: %x", regs.IC, regs.OP, regs.OI,
-    //  regs.AC);
-    // printf("%x %x\n", memory[regs.IC], memory[regs.IC + 1]);
-    // printf("%x %x %x %x\n", regs.IC, regs.IR, regs.OP, regs.OI);
-    // getchar();
 
     if (execute_mvn_instruction()) {
       return;
     }
+
+    // printf("MAR: %x, MDR: %x, IC: %x, IR: %x, OP: %x, OI: %x, AC: %x\n",
+    //  regs.MAR, regs.MDR, regs.IC, regs.IR, regs.OP, regs.OI, regs.AC);
+    // getchar();
   }
 }
 
@@ -236,3 +317,5 @@ int initialize_memory(FILE *file) {
 
   return 0;
 }
+
+#endif // MVN_C_

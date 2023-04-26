@@ -1,6 +1,8 @@
 #include "implementations/disp.c"
 #include "mvn.c"
 
+#include <stdio.h>
+
 int main(int argc, char const *argv[]) {
   if (argc < 2) {
     printf("Error: No file was passed as argument\n");
