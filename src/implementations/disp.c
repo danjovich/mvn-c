@@ -14,8 +14,8 @@ Disp *disp_lst;
 
 void init_disp_list() {
   disp_lst = malloc(disp_lst_len * sizeof(Disp));
-  disp_lst[0] = (Disp){keyboard, 0, '\0', ""};
-  disp_lst[1] = (Disp){monitor, 0, '\0', ""};
+  disp_lst[0] = (Disp){keyboard, 0, '\0', "", NULL};
+  disp_lst[1] = (Disp){monitor, 0, '\0', "", NULL};
 }
 
 int fill_disp_lst(FILE *file) {
@@ -25,17 +25,16 @@ int fill_disp_lst(FILE *file) {
     bool read_type = false, read_lu = false, read_filename = false;
 
     disp_lst = realloc(disp_lst, (++disp_lst_len) * sizeof(Disp));
-    Disp *curr_disp = &((Disp){0, 0, 0, malloc(1)});
+    Disp *curr_disp = &((Disp){0, 0, 0, malloc(1), NULL});
     fscanf(file, "%c", &read_char);
     do {
       if (read_char == ' ') {
+        fscanf(file, "%c", &read_char);
         continue;
       } else if (read_char == '\n') {
         break;
       }
 
-      printf("read_char: %c, read_type: %d, read_lu: %d, read_filename: %d\n",
-             read_char, read_type, read_lu, read_filename);
       if (!read_type) {
         if (read_char == '0') {
           curr_disp->type = keyboard;
