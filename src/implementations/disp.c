@@ -20,12 +20,12 @@ void init_disp_list() {
 
 int fill_disp_lst(FILE *file) {
   char read_char;
-  Disp curr_disp;
+
   while (!feof(file)) {
     bool read_type = false, read_lu = false, read_filename = false;
 
     disp_lst = realloc(disp_lst, (++disp_lst_len) * sizeof(Disp));
-    curr_disp = (Disp){0, 0, 0, malloc(1)};
+    Disp *curr_disp = &((Disp){0, 0, 0, malloc(1)});
     fscanf(file, "%c", &read_char);
     do {
       if (read_char == ' ') {
@@ -38,22 +38,22 @@ int fill_disp_lst(FILE *file) {
              read_char, read_type, read_lu, read_filename);
       if (!read_type) {
         if (read_char == '0') {
-          curr_disp.type = keyboard;
+          curr_disp->type = keyboard;
         } else if (read_char == '1') {
-          curr_disp.type = monitor;
+          curr_disp->type = monitor;
         } else if (read_char == '2') {
-          curr_disp.type = printer;
+          curr_disp->type = printer;
         } else if (read_char == '3') {
-          curr_disp.type = disk;
+          curr_disp->type = disk;
         } else {
-          free(curr_disp.filename);
+          free(curr_disp->filename);
           printf("Error: invalid device type\n");
           return 1;
         }
 
         fscanf(file, "%c", &read_char);
         if (read_char != ' ') {
-          free(curr_disp.filename);
+          free(curr_disp->filename);
           printf("Error: invalid disp.lst file\n");
           return 1;
         }
@@ -63,6 +63,7 @@ int fill_disp_lst(FILE *file) {
         bool read_newline = false;
 
         if (!is_hexadecimal(read_char)) {
+          free(curr_disp->filename);
           printf("Error: invalid disp.lst file\n");
           return 1;
         }
@@ -91,35 +92,35 @@ int fill_disp_lst(FILE *file) {
         }
 
         if (read_newline &&
-            (curr_disp.type == disk || curr_disp.type == printer)) {
+            (curr_disp->type == disk || curr_disp->type == printer)) {
           printf("Error: invalid disp.lst file\n");
           return 1;
         }
 
-        curr_disp.logic_unit = lu;
+        curr_disp->logic_unit = lu;
         read_lu = true;
 
         if (read_newline) {
           break;
         }
       } else if (!read_filename) {
-        if (curr_disp.type == keyboard || curr_disp.type == monitor) {
+        if (curr_disp->type == keyboard || curr_disp->type == monitor) {
           printf("Error: invalid disp.lst file\n");
           return 1;
         }
 
         int filename_size = 0;
         while (!feof(file) && read_char != ' ' && read_char != '\n') {
-          curr_disp.filename = realloc(curr_disp.filename, ++filename_size);
-          curr_disp.filename[filename_size - 1] = read_char;
+          curr_disp->filename = realloc(curr_disp->filename, ++filename_size);
+          curr_disp->filename[filename_size - 1] = read_char;
           fscanf(file, "%c", &read_char);
         }
 
         read_filename = true;
 
-        if (curr_disp.type == printer) {
+        if (curr_disp->type == printer) {
           if (!feof(file) && read_char != '\n') {
-            free(curr_disp.filename);
+            free(curr_disp->filename);
             printf("Error: invalid disp.lst file\n");
             return 1;
           }
@@ -127,20 +128,19 @@ int fill_disp_lst(FILE *file) {
           break;
         }
       } else {
-        if (curr_disp.type != disk || (read_char != 'e' && read_char != 'l')) {
+        if (curr_disp->type != disk || (read_char != 'e' && read_char != 'l')) {
+          free(curr_disp->filename);
           printf("Error: invalid disp.lst file\n");
           return 1;
         }
 
-        curr_disp.mode = read_char;
-        disp_lst[disp_lst_len - 1] = curr_disp;
+        curr_disp->mode = read_char;
       }
 
       fscanf(file, "%c", &read_char);
     } while (read_char != '\n' && !feof(file));
+    disp_lst[disp_lst_len - 1] = *curr_disp;
   }
-
-  printf("%s\n", disp_lst[0].filename);
 
   return 0;
 }
