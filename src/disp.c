@@ -1,10 +1,7 @@
-#if !defined(DISP_C_)
-#define DISP_C_
+#include "disp.h"
 
-#include "../include/disp.h"
-
-#include "../include/types.h"
-#include "utils.c"
+#include "types.h"
+#include "utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -147,5 +144,3 @@ int fill_disp_lst(FILE *file) {
 
   return 0;
 }
-
-#endif // DISP_C_

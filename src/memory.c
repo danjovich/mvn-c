@@ -1,9 +1,8 @@
-#include "../implementations/registers.c"
+#include "memory.h"
 
-#include <stdint.h>
+#include "registers.h"
+
 #include <stdio.h>
-// 4.095 kB memory
-#define MEMORY_SIZE 0xFFF
 
 uint8_t memory[MEMORY_SIZE] = {0x00};
 

@@ -1,13 +1,10 @@
-#if !defined(MVN_C_)
-#define MVN_C_
+#include "mvn.h"
 
-#include "error.c"
-#include "implementations/disp.c"
-#include "implementations/memory.c"
-#include "implementations/registers.c"
-#include "include/types.h"
-
-#include <stdio.h>
+#include "disp.h"
+#include "error.h"
+#include "memory.h"
+#include "registers.h"
+#include "types.h"
 
 int get_from_device(disp_type device_type, uint8_t logic_unit) {
   if (device_type == keyboard) {
@@ -319,5 +316,3 @@ int initialize_memory(FILE *file) {
 
   return 0;
 }
-
-#endif // MVN_C_

@@ -53,4 +53,11 @@ typedef struct disp {
   FILE *file;
 } Disp;
 
+extern int disp_lst_len;
+extern Disp *disp_lst;
+
+void init_disp_list();
+
+int fill_disp_lst(FILE *file);
+
 #endif // DISP_H_

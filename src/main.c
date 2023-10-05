@@ -1,5 +1,5 @@
-#include "implementations/disp.c"
-#include "mvn.c"
+#include "disp.h"
+#include "mvn.h"
 
 #include <stdio.h>
 

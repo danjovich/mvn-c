@@ -1,5 +1,6 @@
 #if !defined(REGISTERS_H_)
 #define REGISTERS_H_
+
 #include <stdint.h>
 
 /**
@@ -30,5 +31,7 @@ typedef struct registers {
   // Instruction Counter, it is used to save the address of the next instruction
   uint16_t IC;
 } Registers;
+
+extern Registers regs;
 
 #endif // REGISTERS_H_
