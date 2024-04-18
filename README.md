@@ -21,4 +21,9 @@ Ela implementa a seguinte especificação:
 | C | IC := OI |
 | D | aguarda; AC := dado de entrada; IC := IC+1 |
 | E | dado de saída := AC; aguarda; IC := IC+1 |
-| F | Nada, por ora; IC := IC+1 |
+| F | NOP; IC := IC+1 |
+
+## TODO
+[ ] Implementar stack
+[ ] Debugger
+[ ] Completar README
