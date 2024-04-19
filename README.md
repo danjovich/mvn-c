@@ -24,6 +24,6 @@ Ela implementa a seguinte especificação:
 | F | NOP; IC := IC+1 |
 
 ## TODO
-[ ] Implementar stack
-[ ] Debugger
-[ ] Completar README
+- [ ] Implementar stack
+- [ ] Debugger
+- [ ] Completar README
